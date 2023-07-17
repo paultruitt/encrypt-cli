@@ -73,11 +73,13 @@ fn main() {
             vec![message]
         },
         SubCommand::EncryptMessage { message, recipients, pubkeys } => {
-            match commands::encrypt_message_cmd(message, recipients, pubkeys) {
-                Ok(v) => {
-                    vec!["Encryption Successful".to_string(), format!("Ouput: {:#?}", v)]
-                },
-                Err(e) => vec![format!("Failed to encrypt: {}", e.to_string())]
+            let pubkey_result = commands::encrypt_message_cmd(message, recipients, pubkeys);
+            if pubkey_result.is_err() {
+                vec![format!("Failed to encrypt: {}", pubkey_result.unwrap_err().to_string())]
+            } else {
+                let mut msg_string = format!("{:?}", pubkey_result.unwrap());
+                msg_string.retain(|c| !(c.is_whitespace() || c == '[' || c == ']'));
+                vec!["Encryption Successful".to_string(), format!("Ouput: {:#?}", msg_string)]
             }
         },
         SubCommand::DecryptMessage { key, message } => {
