@@ -32,7 +32,7 @@ pub fn name_to_recipient(recipient_name: &str) -> Result<Box<dyn age::Recipient 
     get_recipient_from_str(&pubkey)
 }
 
-fn get_recipient_from_str(pubkey_str: &str) -> Result<Box<dyn age::Recipient + Send>, EncryptCLIError> {
+pub fn get_recipient_from_str(pubkey_str: &str) -> Result<Box<dyn age::Recipient + Send>, EncryptCLIError> {
     let recipient = match Recipient::from_str(pubkey_str) {
         Err(_e) => Err(EncryptCLIError::new_key_load_error("Failed to create Recipient from Key")),
         Ok(r) => Ok(r)

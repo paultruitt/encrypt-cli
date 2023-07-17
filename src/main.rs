@@ -38,7 +38,10 @@ enum SubCommand {
         message: String,
         /// Vector of recipients to send to
         #[arg(short, long, num_args = 1.., value_delimiter = ' ')]
-        recipients: Vec<String>
+        recipients: Vec<String>,
+        /// Flag to specify we are passing pubkeys rather than contact names
+        #[arg(short, long, action)]
+        pubkeys: bool
     }
 }
 
@@ -59,11 +62,14 @@ fn main() {
                 Err(e) => format!("Failed to create contact: {}", e.to_string())
             };
             vec![message]
-        }
-        SubCommand::EncryptMessage { message, recipients } => {
-            println!("{}", message);
-            println!("{:?}", recipients);
-            vec!["".to_string()]
+        },
+        SubCommand::EncryptMessage { message, recipients, pubkeys } => {
+            match commands::encrypt_message_cmd(message, recipients, pubkeys) {
+                Ok(v) => {
+                    vec!["Encryption Successful".to_string(), format!("Ouput: {:?}", v)]
+                },
+                Err(e) => vec![format!("Failed to encrypt: {}", e.to_string())]
+            }
         }
     };
     for message in messages {
