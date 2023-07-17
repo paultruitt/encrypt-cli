@@ -4,7 +4,7 @@ use crate::encrypt_lib::errors::EncryptCLIError;
 
 pub fn write_str_to_file(msg: &str, file_path: &PathBuf) -> Result<(), EncryptCLIError> {
     let bytes = Vec::from(msg.as_bytes());
-    write_to_file(bytes, file_path)
+    write_to_file(&bytes, file_path)
 }
 
 pub fn read_string_from_file(file_path: &PathBuf) -> Result<String, EncryptCLIError> {
@@ -14,7 +14,7 @@ pub fn read_string_from_file(file_path: &PathBuf) -> Result<String, EncryptCLIEr
     }
 }
 
-pub fn write_to_file(bytes: Vec<u8>, file_path: &PathBuf) -> Result<(), EncryptCLIError> {
+pub fn write_to_file(bytes: &Vec<u8>, file_path: &PathBuf) -> Result<(), EncryptCLIError> {
     match fs::write(file_path, bytes) {
         Ok(()) => Ok(()),
         Err(_e) => Err(EncryptCLIError::new_file_error("Failed to write to file"))

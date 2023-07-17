@@ -1,5 +1,7 @@
 mod encrypt_lib;
 
+use std::path::PathBuf;
+
 use clap::{Parser, Subcommand};
 use encrypt_lib::commands;
 
@@ -41,7 +43,10 @@ enum SubCommand {
         recipients: Vec<String>,
         /// Flag to specify we are passing pubkeys rather than contact names
         #[arg(short, long, action)]
-        pubkeys: bool
+        pubkeys: bool,
+        /// File to write the output to
+        #[arg(short, long)]
+        outfile: Option<PathBuf>
     },
     /// Decrypt a message meant for you
     DecryptMessage {
@@ -72,8 +77,8 @@ fn main() {
             };
             vec![message]
         },
-        SubCommand::EncryptMessage { message, recipients, pubkeys } => {
-            let pubkey_result = commands::encrypt_message_cmd(message, recipients, pubkeys);
+        SubCommand::EncryptMessage { message, recipients, pubkeys, outfile } => {
+            let pubkey_result = commands::encrypt_message_cmd(message, recipients, pubkeys, outfile);
             if pubkey_result.is_err() {
                 vec![format!("Failed to encrypt: {}", pubkey_result.unwrap_err().to_string())]
             } else {
