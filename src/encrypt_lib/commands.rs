@@ -20,3 +20,8 @@ pub fn encrypt_message_cmd(message: String, recipients: Vec<String>, pubkeys_pas
     };
     encryption::encrypt_text(&message, recipient_objects)
 }
+
+pub fn decrypt_message_cmd(key_name: String, encrypted_message: Vec<u8>) -> Result<String, EncryptCLIError> {
+    let id = identity::load_identity(Some(key_name))?;
+    encryption::decrypt_buffer(encrypted_message, &id)
+}

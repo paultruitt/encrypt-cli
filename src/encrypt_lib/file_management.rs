@@ -21,13 +21,6 @@ pub fn write_to_file(bytes: Vec<u8>, file_path: &PathBuf) -> Result<(), EncryptC
     }
 }
 
-pub fn read_file(file_path: &PathBuf) -> Result<Vec<u8>, EncryptCLIError> {
-    match fs::read(file_path) {
-        Ok(r) => Ok(r),
-        Err(_e) => Err(EncryptCLIError::new_file_error("Failed to read file"))
-    }
-}
-
 pub fn create_keys_dir() -> Result<(), EncryptCLIError> {
     let contacts_dir: PathBuf = get_keys_dir();
     create_dir(&contacts_dir)

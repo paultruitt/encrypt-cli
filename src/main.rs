@@ -42,6 +42,15 @@ enum SubCommand {
         /// Flag to specify we are passing pubkeys rather than contact names
         #[arg(short, long, action)]
         pubkeys: bool
+    },
+    /// Decrypt a message meant for you
+    DecryptMessage {
+        /// Key name to decrypt with
+        #[arg(short, long)]
+        key: String,
+        /// Encrypted message
+        #[arg(short, long, num_args = 1.., value_delimiter = ',')]
+        message: Vec<u8>
     }
 }
 
@@ -66,9 +75,15 @@ fn main() {
         SubCommand::EncryptMessage { message, recipients, pubkeys } => {
             match commands::encrypt_message_cmd(message, recipients, pubkeys) {
                 Ok(v) => {
-                    vec!["Encryption Successful".to_string(), format!("Ouput: {:?}", v)]
+                    vec!["Encryption Successful".to_string(), format!("Ouput: {:#?}", v)]
                 },
                 Err(e) => vec![format!("Failed to encrypt: {}", e.to_string())]
+            }
+        },
+        SubCommand::DecryptMessage { key, message } => {
+            match commands::decrypt_message_cmd(key, message) {
+                Ok(s) => vec!["Decryption Successful".to_string(), format!("Ouput: {:#?}", s)],
+                Err(e) => vec![format!("Failed to decrypt: {}", e.to_string())]
             }
         }
     };
