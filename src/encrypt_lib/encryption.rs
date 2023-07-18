@@ -25,7 +25,7 @@ pub fn encrypt_bytes(message_bytes: &Vec<u8>, recipients: Vec<Box<dyn Recipient 
     Ok(encrypted)
 }
 
-pub fn decrypt_bytes(encrypted: Vec<u8>, identity: &Identity) -> Result<String, EncryptLibError> {
+pub fn decrypt_bytes(encrypted: Vec<u8>, identity: &Identity) -> Result<Vec<u8>, EncryptLibError> {
     let decryptor = match Decryptor::new(&encrypted[..]) {
         Ok(Decryptor::Recipients(d)) => Ok(d),
         Ok(_) => unreachable!(),
@@ -37,8 +37,5 @@ pub fn decrypt_bytes(encrypted: Vec<u8>, identity: &Identity) -> Result<String, 
         Err(_e) => Err(EncryptLibError::new_encryption_error("Failed to create reader"))
     }?;
     let _ = reader.read_to_end(&mut decrypted);
-    return match String::from_utf8(decrypted) {
-        Ok(m) => Ok(m),
-        Err(_e) => Err(EncryptLibError::new_encryption_error("Couldn't convert output to UTF-8"))
-    }
+    Ok(decrypted)
 }

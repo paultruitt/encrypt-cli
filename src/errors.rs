@@ -13,6 +13,12 @@ impl EncryptCLIError {
             details: format!("Usage Error: {}", msg)
         }
     }
+
+    pub fn new_decoding_error(msg: &str) -> EncryptCLIError {
+        EncryptCLIError {
+            details: format!("Decoding Error: {}", msg)
+        }
+    }
 }
 
 impl Display for EncryptCLIError {

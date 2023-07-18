@@ -41,12 +41,17 @@ pub fn decrypt_message_cmd(encrypted_message: Option<Vec<u8>>, path: Option<Path
     let id = identity::load_identity(Some(key_name))?;
     let message = handle_decryption(encrypted_message, path, id)?;
     if outfile.is_some() {
-        file_management::write_str_to_file(&message, &outfile.unwrap())?;
+        file_management::write_to_file(&message, &outfile.unwrap())?;
+        Ok("Output Written to file".to_string())
+    } else {
+        match String::from_utf8(message) {
+            Ok(m) => Ok(m),
+            Err(_e) => Err(EncryptCLIError::new_decoding_error("Failed to convert output to string"))
+        }
     }
-    Ok(message)
 }
 
-fn handle_decryption(encrypted_message: Option<Vec<u8>>, path: Option<PathBuf>, id: Identity) -> Result<String, EncryptCLIError> {
+fn handle_decryption(encrypted_message: Option<Vec<u8>>, path: Option<PathBuf>, id: Identity) -> Result<Vec<u8>, EncryptCLIError> {
     if encrypted_message.is_some() {
         encryption::decrypt_bytes(encrypted_message.unwrap(), &id).map_err(From::from)
     } else if path.is_some() {
