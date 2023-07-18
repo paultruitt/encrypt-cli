@@ -1,9 +1,9 @@
-mod encrypt_lib;
+pub mod commands;
+pub mod encrypt_lib;
+pub mod errors;
 
-use std::path::PathBuf;
-
-use clap::{Parser, Subcommand};
-use encrypt_lib::commands;
+use std::{path::PathBuf, vec};
+use clap::{Args, Parser, Subcommand};
 
 /// Simple command line interface for encrypting messages
 #[derive(Parser)]
@@ -35,9 +35,8 @@ enum SubCommand {
     },
     /// Encrypt a Message for a user
     EncryptMessage {
-        /// Message to send
-        #[arg(short, long)]
-        message: String,
+        #[command(flatten)]
+        encrypt_input: EncryptInput,
         /// Vector of recipients to send to
         #[arg(short, long, num_args = 1.., value_delimiter = ' ')]
         recipients: Vec<String>,
@@ -50,13 +49,37 @@ enum SubCommand {
     },
     /// Decrypt a message meant for you
     DecryptMessage {
+        #[command(flatten)]
+        decrypt_input: DecryptInput,
         /// Key name to decrypt with
         #[arg(short, long)]
         key: String,
-        /// Encrypted message
-        #[arg(short, long, num_args = 1.., value_delimiter = ',')]
-        message: Vec<u8>
+        /// File to write the output to
+        #[arg(short, long)]
+        outfile: Option<PathBuf>
     }
+}
+
+#[derive(Args, Debug)]
+#[group(required = true, multiple = false)]
+struct EncryptInput {
+    /// Input text
+    #[arg(long, short)]
+    message: Option<String>,
+    /// File containing input
+    #[arg(long, short)]
+    file: Option<PathBuf>
+}
+
+#[derive(Args, Debug)]
+#[group(required = true, multiple = false)]
+struct DecryptInput {
+    /// Encrypted bytes (comma seperated)
+    #[arg(long, short)]
+    message: Option<Vec<u8>>,
+    /// Encrypted file
+    #[arg(long, short)]
+    file: Option<PathBuf>
 }
 
 fn main() {
@@ -77,8 +100,8 @@ fn main() {
             };
             vec![message]
         },
-        SubCommand::EncryptMessage { message, recipients, pubkeys, outfile } => {
-            let pubkey_result = commands::encrypt_message_cmd(message, recipients, pubkeys, outfile);
+        SubCommand::EncryptMessage { encrypt_input, recipients, pubkeys, outfile } => {
+            let pubkey_result = commands::encrypt_message_cmd(encrypt_input.message, encrypt_input.file, recipients, pubkeys, outfile);
             if pubkey_result.is_err() {
                 vec![format!("Failed to encrypt: {}", pubkey_result.unwrap_err().to_string())]
             } else {
@@ -87,8 +110,8 @@ fn main() {
                 vec!["Encryption Successful".to_string(), format!("Ouput: {:#?}", msg_string)]
             }
         },
-        SubCommand::DecryptMessage { key, message } => {
-            match commands::decrypt_message_cmd(key, message) {
+        SubCommand::DecryptMessage { decrypt_input, key, outfile } => {
+            match commands::decrypt_message_cmd(decrypt_input.message, decrypt_input.file, key, outfile) {
                 Ok(s) => vec!["Decryption Successful".to_string(), format!("Ouput: {:#?}", s)],
                 Err(e) => vec![format!("Failed to decrypt: {}", e.to_string())]
             }

@@ -1,40 +1,47 @@
 use std::{env, fs, str, path::PathBuf};
 
-use crate::encrypt_lib::errors::EncryptCLIError;
+use crate::encrypt_lib::errors::EncryptLibError;
 
-pub fn write_str_to_file(msg: &str, file_path: &PathBuf) -> Result<(), EncryptCLIError> {
+pub fn write_str_to_file(msg: &str, file_path: &PathBuf) -> Result<(), EncryptLibError> {
     let bytes = Vec::from(msg.as_bytes());
     write_to_file(&bytes, file_path)
 }
 
-pub fn read_string_from_file(file_path: &PathBuf) -> Result<String, EncryptCLIError> {
+pub fn read_string_from_file(file_path: &PathBuf) -> Result<String, EncryptLibError> {
     match fs::read_to_string(file_path) {
         Ok(s) => Ok(s),
-        Err(_e) => Err(EncryptCLIError::new_file_error("Failed to read file"))
+        Err(_e) => Err(EncryptLibError::new_file_error("Failed to read file"))
     }
 }
 
-pub fn write_to_file(bytes: &Vec<u8>, file_path: &PathBuf) -> Result<(), EncryptCLIError> {
+pub fn read_bytes_from_file(file_path: &PathBuf) -> Result<Vec<u8>, EncryptLibError> {
+    match fs::read(file_path) {
+        Ok(s) => Ok(s),
+        Err(_e) => Err(EncryptLibError::new_file_error("Failed to read file"))
+    }
+}
+
+pub fn write_to_file(bytes: &Vec<u8>, file_path: &PathBuf) -> Result<(), EncryptLibError> {
     match fs::write(file_path, bytes) {
         Ok(()) => Ok(()),
-        Err(_e) => Err(EncryptCLIError::new_file_error("Failed to write to file"))
+        Err(_e) => Err(EncryptLibError::new_file_error("Failed to write to file"))
     }
 }
 
-pub fn create_keys_dir() -> Result<(), EncryptCLIError> {
+pub fn create_keys_dir() -> Result<(), EncryptLibError> {
     let contacts_dir: PathBuf = get_keys_dir();
     create_dir(&contacts_dir)
 }
 
-pub fn create_contacts_dir() -> Result<(), EncryptCLIError> {
+pub fn create_contacts_dir() -> Result<(), EncryptLibError> {
     let contacts_dir: PathBuf = get_contnacts_dir();
     create_dir(&contacts_dir)
 }
 
-fn create_dir(path: &PathBuf) -> Result<(), EncryptCLIError> {
+fn create_dir(path: &PathBuf) -> Result<(), EncryptLibError> {
     match fs::create_dir_all(path) {
         Ok(()) => Ok(()),
-        Err(_e) => Err(EncryptCLIError::new_file_error("Failed to create dir"))
+        Err(_e) => Err(EncryptLibError::new_file_error("Failed to create dir"))
     }
 }
 
