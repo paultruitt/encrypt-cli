@@ -70,7 +70,7 @@ pub struct EncryptInput {
 #[group(required = true, multiple = false)]
 pub struct DecryptInput {
     /// Encrypted bytes (comma seperated)
-    #[arg(long, short)]
+    #[arg(short, long, num_args = 1.., value_delimiter = ',')]
     pub message: Option<Vec<u8>>,
     /// Encrypted file
     #[arg(long, short)]
