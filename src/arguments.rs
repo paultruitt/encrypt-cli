@@ -1,5 +1,5 @@
-use std::path::PathBuf;
 use clap::{Args, Parser, Subcommand};
+use std::path::PathBuf;
 
 /// Simple command line interface for encrypting messages
 #[derive(Parser)]
@@ -8,7 +8,7 @@ pub struct Arguments {
     #[arg(short, long, action = clap::ArgAction::Count)]
     pub verbosity: u8,
     #[command(subcommand)]
-    pub cmd: SubCommand
+    pub cmd: SubCommand,
 }
 
 #[derive(Subcommand, Debug)]
@@ -17,7 +17,7 @@ pub enum SubCommand {
     CreateKeypair {
         /// Name to give the keypair
         #[arg(short, long, default_value_t = String::from("key"))]
-        name: String
+        name: String,
     },
     /// Add a user to your contacts
     AddContact {
@@ -26,7 +26,7 @@ pub enum SubCommand {
         name: String,
         /// Contact's Public Key
         #[arg(short, long)]
-        pubkey: String
+        pubkey: String,
     },
     /// Encrypt a Message for a user
     EncryptMessage {
@@ -40,7 +40,7 @@ pub enum SubCommand {
         pubkeys: bool,
         /// File to write the output to
         #[arg(short, long)]
-        outfile: Option<PathBuf>
+        outfile: Option<PathBuf>,
     },
     /// Decrypt a message meant for you
     DecryptMessage {
@@ -51,8 +51,8 @@ pub enum SubCommand {
         key: String,
         /// File to write the output to
         #[arg(short, long)]
-        outfile: Option<PathBuf>
-    }
+        outfile: Option<PathBuf>,
+    },
 }
 
 #[derive(Args, Debug)]
@@ -63,7 +63,7 @@ pub struct EncryptInput {
     pub message: Option<String>,
     /// File containing input
     #[arg(long, short)]
-    pub file: Option<PathBuf>
+    pub file: Option<PathBuf>,
 }
 
 #[derive(Args, Debug)]
@@ -74,5 +74,5 @@ pub struct DecryptInput {
     pub message: Option<Vec<u8>>,
     /// Encrypted file
     #[arg(long, short)]
-    pub file: Option<PathBuf>
+    pub file: Option<PathBuf>,
 }

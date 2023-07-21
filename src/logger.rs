@@ -1,9 +1,9 @@
 pub struct Logger {
-    verbosity: u8
+    verbosity: u8,
 }
 
 impl Logger {
-    pub fn new(verbosity: u8) ->  Self {
+    pub fn new(verbosity: u8) -> Self {
         Logger { verbosity }
     }
 

@@ -4,19 +4,19 @@ use crate::encrypt_lib::errors::EncryptLibError;
 
 #[derive(Debug)]
 pub struct EncryptCLIError {
-    details: String
+    details: String,
 }
 
 impl EncryptCLIError {
     pub fn new_usage_error(msg: &str) -> EncryptCLIError {
         EncryptCLIError {
-            details: format!("Usage Error: {}", msg)
+            details: format!("Usage Error: {}", msg),
         }
     }
 
     pub fn new_decoding_error(msg: &str) -> EncryptCLIError {
         EncryptCLIError {
-            details: format!("Decoding Error: {}", msg)
+            details: format!("Decoding Error: {}", msg),
         }
     }
 }
@@ -29,6 +29,8 @@ impl Display for EncryptCLIError {
 
 impl From<EncryptLibError> for EncryptCLIError {
     fn from(value: EncryptLibError) -> Self {
-        EncryptCLIError { details: value.to_string() }
+        EncryptCLIError {
+            details: value.to_string(),
+        }
     }
 }
