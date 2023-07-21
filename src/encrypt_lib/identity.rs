@@ -58,7 +58,7 @@ fn save_pubkey(identity: &Identity, key_name: &String, logger: &Logger) -> Resul
     let mut config_path = file_management::get_keys_dir();
     config_path.push(format!("{}.pub", key_name));
     let save_result = file_management::write_str_to_file(&public_key, &config_path);
-    return match save_result {
+    match save_result {
         Err(e) => Err(e),
         Ok(()) => Ok(public_key)
     }

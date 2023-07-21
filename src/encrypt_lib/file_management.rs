@@ -51,7 +51,7 @@ fn get_config_dir() -> PathBuf {
     config_dir.push(home_dir);
     config_dir.push(".config");
     config_dir.push("encrypt-cli");
-    return config_dir
+    config_dir
 }
 
 pub fn get_keys_dir() -> PathBuf {

@@ -17,14 +17,14 @@ fn main() {
         SubCommand::CreateKeypair { name } => {
             let message = match commands::create_keypair_cmd(name, &logger) {
                 Ok(k) => format!("Resulting Pubkey: {}", k),
-                Err(e) => format!("Failed to create Keypair: {}", e.to_string())
+                Err(e) => format!("Failed to create Keypair: {}", e)
             };
             vec![message]
         },
         SubCommand::AddContact { name, pubkey } => {
             let message = match commands::add_contact_cmd(name, pubkey, &logger) {
-                Ok(()) => format!("Successfully added contact"),
-                Err(e) => format!("Failed to create contact: {}", e.to_string())
+                Ok(()) => "Successfully added contact".to_string(),
+                Err(e) => format!("Failed to create contact: {}", e)
             };
             vec![message]
         },
@@ -41,7 +41,7 @@ fn main() {
         SubCommand::DecryptMessage { decrypt_input, key, outfile } => {
             match commands::decrypt_message_cmd(decrypt_input.message, decrypt_input.file, key, outfile, &logger) {
                 Ok(s) => vec!["Decryption Successful".to_string(), format!("Ouput: {:#?}", s)],
-                Err(e) => vec![format!("Failed to decrypt: {}", e.to_string())]
+                Err(e) => vec![format!("Failed to decrypt: {}", e)]
             }
         }
     };

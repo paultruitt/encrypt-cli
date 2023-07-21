@@ -35,9 +35,9 @@ pub fn encrypt_message_cmd(message: Option<String>, path: Option<PathBuf>, recip
 
 fn handle_encryption(message: Option<String>, path: Option<PathBuf>, recipients: Vec<Box<dyn Recipient + Send>>, logger: &Logger) -> Result<Vec<u8>, EncryptCLIError> {
     logger.log("Encrypting...");
-    if message.is_some() {
+    if let Some(message) = message {
         logger.debug("Encrypting message");
-        encryption::encrypt_bytes(&message.unwrap().as_bytes().to_vec(), recipients, logger).map_err(From::from)
+        encryption::encrypt_bytes(message.as_bytes(), recipients, logger).map_err(From::from)
     } else if path.is_some() {
         let file_bytes = file_management::read_bytes_from_file(&path.unwrap())?;
         logger.debug("Encrypting file's bytes");
@@ -67,9 +67,9 @@ pub fn decrypt_message_cmd(encrypted_message: Option<Vec<u8>>, path: Option<Path
 
 fn handle_decryption(encrypted_message: Option<Vec<u8>>, path: Option<PathBuf>, id: Identity, logger: &Logger) -> Result<Vec<u8>, EncryptCLIError> {
     logger.log("Decrypting...");
-    if encrypted_message.is_some() {
+    if let Some(encrypted_message) = encrypted_message {
         logger.debug("Decrypting entered bytes");
-        encryption::decrypt_bytes(encrypted_message.unwrap(), &id, logger).map_err(From::from)
+        encryption::decrypt_bytes(encrypted_message, &id, logger).map_err(From::from)
     } else if path.is_some() {
         logger.debug("Decrypting file");
         let bytes = file_management::read_bytes_from_file(&path.unwrap())?;

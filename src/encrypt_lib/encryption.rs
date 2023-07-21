@@ -4,7 +4,7 @@ use age::{Encryptor, Decryptor, Recipient, x25519::Identity};
 
 use crate::{encrypt_lib::errors::EncryptLibError, logger::Logger};
 
-pub fn encrypt_bytes(message_bytes: &Vec<u8>, recipients: Vec<Box<dyn Recipient + Send>>, logger: &Logger) -> Result<Vec<u8>, EncryptLibError> {
+pub fn encrypt_bytes(message_bytes: &[u8], recipients: Vec<Box<dyn Recipient + Send>>, logger: &Logger) -> Result<Vec<u8>, EncryptLibError> {
     logger.debug("In encrypt_bytes");
     let encryptor = match Encryptor::with_recipients(recipients) {
         None => {
